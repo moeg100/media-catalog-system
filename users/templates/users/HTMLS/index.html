@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Catalog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .home-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(to bottom, #ffffff, #dcdcdc);
+            color: black;
+            border: 1px solid black;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .home-btn:hover {
+            background: linear-gradient(to bottom, #e0e0e0, #bfbfbf);
+        }
+        
+        .hidden {
+            display: none;
+        }
+header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #search {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .media-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .media-cover {
+            width: 80px;
+            height: 80px;
+            background: #e2e2e2;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+.media-info {
+            flex-grow: 1;
+        }
+        .media-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .media-type {
+            font-size: 0.8em;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .media-author {
+            font-size: 0.9em;
+            color: #444;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+.media-description {
+            color: #555;
+            font-size: 0.9em;
+        }
+.filter-buttons {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #e2e2e2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            background: #d0d0d0;
+        }
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+</style>
+</head>
+<body>
+        <a href="login.html" class="home-btn">Log In</a>
+<header>
+    <h1>Media Catalog</h1>
+    <input type="text" id="search" placeholder="Search media by title, author, or year">
+<div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="movie">Movies</button>
+        <button class="filter-btn" data-filter="book">Books</button>
+        <button class="filter-btn" data-filter="music">Music</button>
+        <button class="filter-btn" data-filter="game">Games</button>
+    </div>
+</header>
+<section id="media-container">
+    <!-- Media items will be dynamically inserted here -->
+</section>
+
+<script>
+    // Sample media data
+    const mediaData = [
+        {
+            id: 1,
+            title: "The Witcher 3: Wild Hunt",
+            author: "CD Projekt Red",
+            year: 2015,
+            type: "game",
+            description: "Open world RPG set in a fantasy universe with monster hunting.",
+            cover: ""
+},
+        {
+            id: 2,
+            title: "Dune",
+            author: "Frank Herbert",
+            year: 1965,
+            type: "book",
+            description: "Science fiction novel set in a distant future amidst a feudal interstellar society.",
+            cover: ""
+},
+        {
+            id: 3,
+            title: "Bohemian Rhapsody",
+            author: "Queen",
+            year: 1975,
+            type: "music",
+            description: "Iconic song by Queen blending rock and opera styles.",
+            cover: ""
+},
+        {
+            id: 4,
+            title: "The Last of Us Part II",
+            author: "Naughty Dog",
+            year: 2020,
+            type: "game",
+            description: "Action-adventure game set in a post-apocalyptic world.",
+            cover: ""
+},
+        {
+            id: 5,
+            title: "1984",
+            author: "George Orwell",
+            year: 1949,
+            type: "book",
+            description: "Dystopian novel about totalitarianism and government surveillance.",
+            cover: ""
+},
+        {
+            id: 6,
+            title: "Thriller",
+            author: "Michael Jackson",
+            year: 1982,
+            type: "music",
+            description: "Best-selling album by Michael Jackson featuring hit singles.",
+            cover: ""
+},
+        {
+            id: 7,
+            title: "The Shawshank Redemption",
+            author: "Frank Darabont",
+            year: 1994,
+            type: "movie",
+            description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+            cover: ""
+},
+        {
+            id: 8,
+            title: "To Kill a Mockingbird",
+            author: "Harper Lee",
+            year: 1960,
+            type: "book",
+            description: "Novel about racial inequality and moral growth in the American South.",
+            cover: ""
+},
+        {
+            id: 9,
+            title: "The Dark Side of the Moon",
+            author: "Pink Floyd",
+            year: 1973,
+            type: "music",
+            description: "Pink Floyd's concept album exploring themes of conflict, greed, and mental illness.",
+            cover: ""
+},
+        {
+            id: 10,
+            title: "Cyberpunk 2077",
+            author: "CD Projekt Red",
+            year: 2020,
+            type: "game",
+            description: "Open-world RPG set in a dystopian future with cybernetic enhancements.",
+            cover: ""
+},
+        {
+            id: 11,
+            title: "The Godfather",
+            author: "Francis Ford Coppola",
+            year: 1972,
+            type: "movie",
+            description: "Story about organized crime in America and the Corleone crime family.",
+            cover: ""
+},
+        {
+            id: 12,
+            title: "The Hobbit",
+            author: "J.R.R. Tolkien",
+            year: 1937,
+            type: "book",
+            description: "Fantasy novel about the quest of home-loving Bilbo Baggins.",
+            cover: ""
+},
+        {
+            id: 13,
+            title: "Abbey Road",
+            author: "The Beatles",
+            year: 1969,
+            type: "music",
+            description: "The Beatles' iconic studio album featuring hits like 'Come Together'.",
+            cover: ""
+},
+        {
+            id: 14,
+            title: "Red Dead Redemption 2",
+            author: "Rockstar Games",
+            year: 2018,
+            type: "game",
+            description: "Western-themed action-adventure game set in 1899.",
+            cover: ""
+},
+        {
+            id: 15,
+            title: "Pulp Fiction",
+            author: "Quentin Tarantino",
+            year: 1994,
+            type: "movie",
+            description: "Crime film featuring interconnected stories about crime in Los Angeles.",
+            cover: ""
+}
+    ];
+// Function to render media items
+    function renderMediaItems(items) {
+        const container = document.getElementById('media-container');
+        container.innerHTML = '';
+        
+        items.forEach(item => {
+            const mediaItem = document.createElement('div');
+            mediaItem.className = 'media-item';
+            mediaItem.innerHTML = `
+                <div class="media-cover"></div>
+                <div class="media-info">
+<div class="media-name">${item.title} - ${item.year}</div>
+                    <div class="media-author">${item.author}</div>
+<div class="media-type">${item.type.toUpperCase()}</div>
+                    <div class="media-description">${item.description}</div>
+                </div>
+            `;
+            container.appendChild(mediaItem);
+        });
+    }
+    // Filter functionality
+const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            let filteredItems = mediaData;
+            
+            if (filter !== 'all') {
+                filteredItems = mediaData.filter(item => item.type === filter);
+            }
+            
+            // Apply search filter if there's a search term
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm) || 
+                    (item.author && item.author.toLowerCase().includes(searchTerm)) ||
+                    item.description.toLowerCase().includes(searchTerm) ||
+                    item.type.toLowerCase().includes(searchTerm) ||
+                    item.year.toString().includes(searchTerm)
+);
+            }
+            
+            renderMediaItems(filteredItems);
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+        
+        let filteredItems = mediaData;
+        
+        if (activeFilter !== 'all') {
+            filteredItems = mediaData.filter(item => item.type === activeFilter);
+        }
+        if (searchTerm) {
+            filteredItems = filteredItems.filter(item =>
+                item.title.toLowerCase().includes(searchTerm) || 
+                (item.author && item.author.toLowerCase().includes(searchTerm)) ||
+                item.description.toLowerCase().includes(searchTerm) ||
+                item.type.toLowerCase().includes(searchTerm) ||
+                item.year.toString().includes(searchTerm)
+);
+        }
+        
+        renderMediaItems(filteredItems);
+    });
+    // Initial render after DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        renderMediaItems(mediaData);
+    });
+</script>
+</body>
+</html>
