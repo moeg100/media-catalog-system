@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-feather="book-open" class="w-6 h-6"></i>
+                <span class="font-bold text-xl">Media Catalog</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, Librarian!</span>
+                <a href="../main/index.html" class="bg-white text-secondary px-4 py-1 rounded-lg hover:bg-gray-100 transition duration-200 flex items-center">
+                    <i data-feather="log-out" class="mr-2 w-4 h-4"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <!-- Sidebar -->
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2">
+                        <i data-feather="user" class="w-6 h-6 text-secondary"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Librarian Account</h3>
+                        <p class="text-sm text-gray-500">Admin Access</p>
+                    </div>
+                </div>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 p-2 bg-secondary text-white rounded-lg">
+                            <i data-feather="home" class="w-4 h-4"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-catalog.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="book" class="w-4 h-4"></i>
+                            <span>Manage Catalog</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-patrons.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="users" class="w-4 h-4"></i>
+                            <span>Manage Patrons</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-checkout.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="arrow-right" class="w-4 h-4"></i>
+                            <span>Check Out Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-checkin.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="arrow-left" class="w-4 h-4"></i>
+                            <span>Check In Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-requests.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="inbox" class="w-4 h-4"></i>
+                            <span>Media Requests</span>
+                        </a>
+                    </li>
+</ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="md:col-span-3">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-500">Checkouts Today</h3>
+                            <div class="bg-secondary bg-opacity-20 rounded-full p-2">
+                                <i data-feather="arrow-right" class="w-4 h-4 text-secondary"></i>
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold mt-2">24</p>
+                        <p class="text-sm text-gray-500">+8 from yesterday</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-500">Pending Requests</h3>
+                            <div class="bg-yellow-500 bg-opacity-20 rounded-full p-2">
+                                <i data-feather="inbox" class="w-4 h-4 text-yellow-500"></i>
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold mt-2">7</p>
+                        <p class="text-sm text-gray-500">New today: 2</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-500">Overdue Items</h3>
+                            <div class="bg-red-500 bg-opacity-20 rounded-full p-2">
+                                <i data-feather="alert-triangle" class="w-4 h-4 text-red-500"></i>
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold mt-2">15</p>
+                        <p class="text-sm text-gray-500">3 severely overdue</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-feather="zap" class="mr-2 w-5 h-5"></i>
+                    Quick Actions
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <a href="librarian-checkout.html" class="bg-white rounded-lg shadow p-4 hover:shadow-md transition duration-200 flex flex-col items-center text-center">
+                        <div class="bg-secondary bg-opacity-20 rounded-full p-3 mb-3">
+                            <i data-feather="arrow-right" class="w-6 h-6 text-secondary"></i>
+                        </div>
+                        <h3 class="font-semibold">Check Out</h3>
+                        <p class="text-sm text-gray-500">Process new checkouts</p>
+                    </a>
+                    <a href="librarian-checkin.html" class="bg-white rounded-lg shadow p-4 hover:shadow-md transition duration-200 flex flex-col items-center text-center">
+                        <div class="bg-blue-500 bg-opacity-20 rounded-full p-3 mb-3">
+                            <i data-feather="arrow-left" class="w-6 h-6 text-blue-500"></i>
+                        </div>
+                        <h3 class="font-semibold">Check In</h3>
+                        <p class="text-sm text-gray-500">Process returns</p>
+                    </a>
+                    <a href="librarian-patrons.html" class="bg-white rounded-lg shadow p-4 hover:shadow-md transition duration-200 flex flex-col items-center text-center">
+                        <div class="bg-purple-500 bg-opacity-20 rounded-full p-3 mb-3">
+                            <i data-feather="user-plus" class="w-6 h-6 text-purple-500"></i>
+                        </div>
+                        <h3 class="font-semibold">New Patron</h3>
+                        <p class="text-sm text-gray-500">Create new account</p>
+                    </a>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="border-b p-4 bg-gray-50">
+                        <h2 class="font-semibold text-lg flex items-center">
+                            <i data-feather="activity" class="mr-2 w-5 h-5"></i>
+                            Recent System Activity
+                        </h2>
+                    </div>
+                    <div class="divide-y">
+                        <div class="p-4 hover:bg-gray-50 transition duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 rounded-full p-2">
+                                    <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Checked in "Educated" by Tara Westover</p>
+                                    <p class="text-sm text-gray-500">Patron: LC-789012 • 15 minutes ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 transition duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 rounded-full p-2">
+                                    <i data-feather="arrow-right" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Checked out "Project Hail Mary"</p>
+                                    <p class="text-sm text-gray-500">Patron: LC-345678 • 1 hour ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 transition duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-purple-100 rounded-full p-2">
+                                    <i data-feather="user-plus" class="w-4 h-4 text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Created new patron account</p>
+                                    <p class="text-sm text-gray-500">Patron: LC-901234 • 2 hours ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 transition duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-yellow-100 rounded-full p-2">
+                                    <i data-feather="thumbs-up" class="w-4 h-4 text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Approved media request for "Klara and the Sun"</p>
+                                    <p class="text-sm text-gray-500">Patron: LC-567890 • Yesterday</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>
+

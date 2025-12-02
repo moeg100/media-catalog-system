@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Patrons | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-feather="book-open" class="w-6 h-6"></i>
+                <span class="font-bold text-xl">Media Catalog</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, Librarian!</span>
+               <a href="../main/index.html" class="bg-white text-secondary px-4 py-1 rounded-lg hover:bg-gray-100 transition duration-200 flex items-center">
+                    <i data-feather="log-out" class="mr-2 w-4 h-4"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <!-- Sidebar -->
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2">
+                        <i data-feather="user" class="w-6 h-6 text-secondary"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Librarian Account</h3>
+                        <p class="text-sm text-gray-500">Admin Access</p>
+                    </div>
+                </div>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="librarian-dashboard.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="home" class="w-4 h-4"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-catalog.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="book" class="w-4 h-4"></i>
+                            <span>Manage Catalog</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 p-2 bg-secondary text-white rounded-lg">
+                            <i data-feather="users" class="w-4 h-4"></i>
+                            <span>Manage Patrons</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-checkout.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="arrow-right" class="w-4 h-4"></i>
+                            <span>Check Out Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-checkin.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="arrow-left" class="w-4 h-4"></i>
+                            <span>Check In Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="librarian-requests.html" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition duration-200">
+                            <i data-feather="inbox" class="w-4 h-4"></i>
+                            <span>Media Requests</span>
+                        </a>
+                    </li>
+</ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="md:col-span-3">
+                <!-- Header and Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-2xl font-bold mb-4 md:mb-0 flex items-center">
+                            <i data-feather="users" class="mr-2 w-6 h-6"></i>
+                            Patron Management
+                        </h1>
+                        <div class="flex space-x-2">
+                            <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary-600 transition duration-200 flex items-center" id="addPatronBtn">
+                                <i data-feather="user-plus" class="mr-2 w-4 h-4"></i> Add Patron
+                            </button>
+                            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200 flex items-center" id="importBtn">
+                                <i data-feather="upload" class="mr-2 w-4 h-4"></i> Bulk Import
+                            </button>
+                            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition duration-200 flex items-center" id="exportBtn">
+                                <i data-feather="download" class="mr-2 w-4 h-4"></i> Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="md:col-span-2">
+                            <div class="relative">
+                                <input type="text" placeholder="Search patrons..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                <i data-feather="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                <option>All Patrons</option>
+                                <option>Active</option>
+                                <option>Expired</option>
+                                <option>With Fines</option>
+                                <option>Overdue Items</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Patrons Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patron</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Card Number</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items Out</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fines</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                <span class="text-xs font-medium text-blue-800">Patron</span>
+                                            </div>
+</div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Sarah Johnson</div>
+                                                <div class="text-sm text-gray-500">sarah.j@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LC-789012</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        3
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        $0.00
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-900 edit-btn" data-id="patron123">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900" title="Check Out Items">
+                                                <i data-feather="arrow-right" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-purple-600 hover:text-purple-900" title="View Account">
+                                                <i data-feather="user" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                <span class="text-xs font-medium text-blue-800">Patron</span>
+                                            </div>
+</div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Michael Chen</div>
+                                                <div class="text-sm text-gray-500">michael.c@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LC-345678</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        2
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        $4.50
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-900">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i data-feather="arrow-right" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-purple-600 hover:text-purple-900">
+                                                <i data-feather="user" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                <span class="text-xs font-medium text-blue-800">Patron</span>
+                                            </div>
+</div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">David Wilson</div>
+                                                <div class="text-sm text-gray-500">david.w@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LC-901234</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        1
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        $0.00
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-900">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i data-feather="arrow-right" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-purple-600 hover:text-purple-900">
+                                                <i data-feather="user" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                <span class="text-xs font-medium text-blue-800">Patron</span>
+                                            </div>
+</div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Emma Rodriguez</div>
+                                                <div class="text-sm text-gray-500">emma.r@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LC-567890</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Expires Soon</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        5
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        $0.00
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-900">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i data-feather="arrow-right" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="text-purple-600 hover:text-purple-900">
+                                                <i data-feather="user" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            Showing <span class="font-medium">1</span> to <span class="font-medium">4</span> of <span class="font-medium">124</span> patrons
+                        </div>
+                        <nav class="inline-flex rounded-md shadow">
+                            <a href="#" class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                                <i data-feather="chevron-left" class="w-4 h-4"></i>
+                            </a>
+                            <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-secondary font-medium">1</a>
+                            <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">2</a>
+                            <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">3</a>
+                            <a href="#" class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                                <i data-feather="chevron-right" class="w-4 h-4"></i>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Add New Patron
+        const addPatronBtn = document.getElementById('addPatronBtn');
+        addPatronBtn.addEventListener('click', () => {
+            alert('Add new patron form would appear here');
+        });
+
+        // Bulk Import/Export
+        document.getElementById('importBtn').addEventListener('click', () => {
+            alert('Bulk import modal would appear here');
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            alert('Exporting patron data...');
+        });
+
+        // Edit handlers
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const patronId = e.currentTarget.dataset.id;
+                alert(`Editing patron ${patronId}`);
+            });
+        });
+    </script>
+</body>
+</html>
