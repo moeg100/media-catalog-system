@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Catalog | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#3B82F6', secondary: '#10B981' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-feather="book-open" class="w-6 h-6"></i>
+                <span class="font-bold text-xl">Media Catalog</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, {{ patron.name }}!</span>
+                <a href="{% url 'logout' %}" class="bg-white text-primary px-4 py-1 rounded-lg hover:bg-gray-100 transition duration-200 flex items-center">
+                    <i data-feather="log-out" class="mr-2 w-4 h-4"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2">
+                        <i data-feather="user" class="w-6 h-6 text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Patron Account</h3>
+                        <p class="text-sm text-gray-500">Card: {{ patron.card_number }}</p>
+                    </div>
+                </div>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'patron_dashboard' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="home" class="w-4 h-4"></i><span>Dashboard</span></a></li>
+                    <li><a href="{% url 'patron_search' %}" class="flex items-center space-x-2 p-2 bg-primary text-white rounded-lg"><i data-feather="search" class="w-4 h-4"></i><span>Search Catalog</span></a></li>
+                    <li><a href="{% url 'patron_checked_out' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="book" class="w-4 h-4"></i><span>Checked Out</span></a></li>
+                    <li><a href="{% url 'patron_holds' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="bookmark" class="w-4 h-4"></i><span>My Holds</span></a></li>
+                    <li><a href="{% url 'patron_requests' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="plus-circle" class="w-4 h-4"></i><span>Request Items</span></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h1 class="text-2xl font-bold mb-6 flex items-center">
+                        <i data-feather="search" class="mr-2 w-6 h-6"></i> Search Library Catalog
+                    </h1>
+                    
+                    <form method="get" class="mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="searchTerm" class="block text-gray-700 mb-2">Search Term</label>
+                                <input type="text" name="q" value="{{ query }}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary" placeholder="Title, author, ISBN...">
+                            </div>
+                            <div>
+                                <label for="searchType" class="block text-gray-700 mb-2">Search By</label>
+                                <select name="search_by" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                                    <option value="title" {% if search_by == 'title' %}selected{% endif %}>Title</option>
+                                    <option value="author" {% if search_by == 'author' %}selected{% endif %}>Author</option>
+                                    <option value="isbn" {% if search_by == 'isbn' %}selected{% endif %}>ISBN</option>
+                                    <option value="publisher" {% if search_by == 'publisher' %}selected{% endif %}>Publisher</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Media Type</label>
+                                <select name="type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                                    <option value="">All Types</option>
+                                    <option value="book" {% if media_type == 'book' %}selected{% endif %}>Book</option>
+                                    <option value="audiobook" {% if media_type == 'audiobook' %}selected{% endif %}>Audiobook</option>
+                                    <option value="dvd" {% if media_type == 'dvd' %}selected{% endif %}>DVD</option>
+                                    <option value="cd" {% if media_type == 'cd' %}selected{% endif %}>Music CD</option>
+                                    <option value="magazine" {% if media_type == 'magazine' %}selected{% endif %}>Magazine</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">Genre</label>
+                                <input type="text" name="genre" value="{{ genre }}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary" placeholder="Fiction, Mystery, etc.">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="bg-primary text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition flex items-center">
+                            <i data-feather="search" class="mr-2 w-4 h-4"></i> Search
+                        </button>
+                    </form>
+                    
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 flex items-center">
+                            <i data-feather="book-open" class="mr-2 w-5 h-5"></i> Search Results ({{ total_count }} items)
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            {% for item in items %}
+                            <div class="bg-gray-50 rounded-lg p-4 flex flex-col md:flex-row gap-4">
+                                <div class="w-full md:w-32 flex-shrink-0">
+                                    <div class="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center">
+                                        <span class="text-gray-500">{{ item.get_media_type_display }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow">
+                                    <h3 class="font-bold text-lg">{{ item.title }}</h3>
+                                    <p class="text-gray-600 mb-2">by {{ item.author }}</p>
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ item.genre|default:"General" }}</span>
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{{ item.get_media_type_display }}</span>
+                                        <span class="{% if item.status == 'available' %}bg-purple-100 text-purple-800{% else %}bg-red-100 text-red-800{% endif %} text-xs px-2 py-1 rounded">{{ item.get_status_display }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 mb-3">{{ item.description|truncatewords:30 }}</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <a href="{% url 'patron_place_hold' item.id %}" class="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition flex items-center">
+                                            <i data-feather="bookmark" class="w-3 h-3 mr-1"></i> Place Hold
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-8 text-gray-500">
+                                <p>No items found. Try adjusting your search criteria.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>feather.replace();</script>
+</body>
+</html>

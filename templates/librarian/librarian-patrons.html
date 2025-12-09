@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Patrons | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#3B82F6', secondary: '#10B981' } } } }</script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2"><i data-feather="book-open" class="w-6 h-6"></i><span class="font-bold text-xl">Media Catalog</span></div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, {{ librarian.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-white text-secondary px-4 py-1 rounded-lg hover:bg-gray-100 transition flex items-center"><i data-feather="log-out" class="mr-2 w-4 h-4"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2"><i data-feather="user" class="w-6 h-6 text-secondary"></i></div>
+                    <div><h3 class="font-semibold">Librarian Account</h3><p class="text-sm text-gray-500">Admin Access</p></div>
+                </div>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'librarian_dashboard' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="home" class="w-4 h-4"></i><span>Dashboard</span></a></li>
+                    <li><a href="{% url 'librarian_catalog' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="book" class="w-4 h-4"></i><span>Manage Catalog</span></a></li>
+                    <li><a href="{% url 'librarian_patrons' %}" class="flex items-center space-x-2 p-2 bg-secondary text-white rounded-lg"><i data-feather="users" class="w-4 h-4"></i><span>Manage Patrons</span></a></li>
+                    <li><a href="{% url 'librarian_checkout' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="arrow-right" class="w-4 h-4"></i><span>Check Out Items</span></a></li>
+                    <li><a href="{% url 'librarian_checkin' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="arrow-left" class="w-4 h-4"></i><span>Check In Items</span></a></li>
+                    <li><a href="{% url 'librarian_requests' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="inbox" class="w-4 h-4"></i><span>Media Requests</span></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-2xl font-bold mb-4 md:mb-0 flex items-center"><i data-feather="users" class="mr-2 w-6 h-6"></i>Patron Management</h1>
+                    </div>
+
+                    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="md:col-span-2">
+                            <div class="relative">
+                                <input type="text" name="q" value="{{ query }}" placeholder="Search patrons..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary">
+                                <i data-feather="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <select name="filter" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" onchange="this.form.submit()">
+                                <option value="">All Patrons</option>
+                                <option value="active" {% if filter_type == 'active' %}selected{% endif %}>Active</option>
+                                <option value="expired" {% if filter_type == 'expired' %}selected{% endif %}>Expired</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patron</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Card Number</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items Out</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fines</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for patron in patrons %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center"><span class="text-xs font-medium text-blue-800">{{ patron.name|slice:":2"|upper }}</span></div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">{{ patron.name }}</div>
+                                                <div class="text-sm text-gray-500">{{ patron.email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ patron.card_number }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs font-semibold rounded-full {% if patron.status == 'active' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">{{ patron.get_status_display }}</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patron.get_checked_out_count }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ patron.get_total_fines|floatformat:2 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No patrons found</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 text-sm text-gray-500">Showing {{ patrons|length }} of {{ total_count }} patrons</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>feather.replace();</script>
+</body>
+</html>
