@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Catalog | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#3B82F6', secondary: '#10B981' } } } }</script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2"><i data-feather="book-open" class="w-6 h-6"></i><span class="font-bold text-xl">Media Catalog</span></div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, {{ librarian.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-white text-secondary px-4 py-1 rounded-lg hover:bg-gray-100 transition flex items-center"><i data-feather="log-out" class="mr-2 w-4 h-4"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% else %}bg-green-100 border-green-500 text-green-700{% endif %} border-l-4 p-4 mb-4">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2"><i data-feather="user" class="w-6 h-6 text-secondary"></i></div>
+                    <div><h3 class="font-semibold">Librarian Account</h3><p class="text-sm text-gray-500">Admin Access</p></div>
+                </div>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'librarian_dashboard' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="home" class="w-4 h-4"></i><span>Dashboard</span></a></li>
+                    <li><a href="{% url 'librarian_catalog' %}" class="flex items-center space-x-2 p-2 bg-secondary text-white rounded-lg"><i data-feather="book" class="w-4 h-4"></i><span>Manage Catalog</span></a></li>
+                    <li><a href="{% url 'librarian_patrons' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="users" class="w-4 h-4"></i><span>Manage Patrons</span></a></li>
+                    <li><a href="{% url 'librarian_checkout' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="arrow-right" class="w-4 h-4"></i><span>Check Out Items</span></a></li>
+                    <li><a href="{% url 'librarian_checkin' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="arrow-left" class="w-4 h-4"></i><span>Check In Items</span></a></li>
+                    <li><a href="{% url 'librarian_requests' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="inbox" class="w-4 h-4"></i><span>Media Requests</span></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-2xl font-bold mb-4 md:mb-0 flex items-center"><i data-feather="book" class="mr-2 w-6 h-6"></i>Library Catalog Management</h1>
+                        <button onclick="document.getElementById('addItemModal').classList.remove('hidden')" class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center"><i data-feather="plus" class="mr-2 w-4 h-4"></i>Add New Item</button>
+                    </div>
+
+                    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="md:col-span-2">
+                            <div class="relative">
+                                <input type="text" name="q" value="{{ query }}" placeholder="Search catalog..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary">
+                                <i data-feather="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <select name="type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" onchange="this.form.submit()">
+                                <option value="">All Media Types</option>
+                                <option value="book" {% if media_type == 'book' %}selected{% endif %}>Books</option>
+                                <option value="audiobook" {% if media_type == 'audiobook' %}selected{% endif %}>Audiobooks</option>
+                                <option value="dvd" {% if media_type == 'dvd' %}selected{% endif %}>DVDs</option>
+                                <option value="cd" {% if media_type == 'cd' %}selected{% endif %}>CDs</option>
+                                <option value="magazine" {% if media_type == 'magazine' %}selected{% endif %}>Magazines</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Author</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for item in items %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded bg-blue-100 flex items-center justify-center"><span class="text-xs font-medium text-blue-800">{{ item.get_media_type_display|slice:":4" }}</span></div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">{{ item.title }}</div>
+                                                <div class="text-sm text-gray-500">{{ item.barcode }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.author }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ item.get_media_type_display }}</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs font-semibold rounded-full {% if item.status == 'available' %}bg-blue-100 text-blue-800{% else %}bg-red-100 text-red-800{% endif %}">{{ item.get_status_display }}</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <a href="{% url 'librarian_delete_item' item.id %}" class="text-red-600 hover:text-red-900" onclick="return confirm('Delete this item?')"><i data-feather="trash-2" class="w-4 h-4 inline"></i></a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No items in catalog</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 text-sm text-gray-500">Showing {{ items|length }} of {{ total_count }} items</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addItemModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Add New Item</h2>
+            <form method="post" action="{% url 'librarian_add_item' %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <input type="text" name="title" placeholder="Title" class="w-full px-4 py-2 border rounded-lg" required>
+                    <input type="text" name="author" placeholder="Author" class="w-full px-4 py-2 border rounded-lg" required>
+                    <select name="media_type" class="w-full px-4 py-2 border rounded-lg" required>
+                        <option value="book">Book</option>
+                        <option value="audiobook">Audiobook</option>
+                        <option value="dvd">DVD</option>
+                        <option value="cd">Music CD</option>
+                        <option value="magazine">Magazine</option>
+                    </select>
+                    <input type="text" name="isbn" placeholder="ISBN (optional)" class="w-full px-4 py-2 border rounded-lg">
+                    <input type="text" name="genre" placeholder="Genre" class="w-full px-4 py-2 border rounded-lg">
+                    <input type="text" name="publisher" placeholder="Publisher" class="w-full px-4 py-2 border rounded-lg">
+                    <input type="text" name="location" placeholder="Location" class="w-full px-4 py-2 border rounded-lg">
+                    <textarea name="description" placeholder="Description" class="w-full px-4 py-2 border rounded-lg" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="document.getElementById('addItemModal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-secondary text-white rounded-lg">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>feather.replace();</script>
+</body>
+</html>

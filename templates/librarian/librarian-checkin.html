@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check In Items | Media Catalog</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#3B82F6', secondary: '#10B981' } } } }</script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2"><i data-feather="book-open" class="w-6 h-6"></i><span class="font-bold text-xl">Media Catalog</span></div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:block">Welcome back, {{ librarian.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-white text-secondary px-4 py-1 rounded-lg hover:bg-gray-100 transition flex items-center"><i data-feather="log-out" class="mr-2 w-4 h-4"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% else %}bg-green-100 border-green-500 text-green-700{% endif %} border-l-4 p-4 mb-4">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                    <div class="bg-gray-200 rounded-full p-2"><i data-feather="user" class="w-6 h-6 text-secondary"></i></div>
+                    <div><h3 class="font-semibold">Librarian Account</h3><p class="text-sm text-gray-500">Admin Access</p></div>
+                </div>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'librarian_dashboard' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="home" class="w-4 h-4"></i><span>Dashboard</span></a></li>
+                    <li><a href="{% url 'librarian_catalog' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="book" class="w-4 h-4"></i><span>Manage Catalog</span></a></li>
+                    <li><a href="{% url 'librarian_patrons' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="users" class="w-4 h-4"></i><span>Manage Patrons</span></a></li>
+                    <li><a href="{% url 'librarian_checkout' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="arrow-right" class="w-4 h-4"></i><span>Check Out Items</span></a></li>
+                    <li><a href="{% url 'librarian_checkin' %}" class="flex items-center space-x-2 p-2 bg-secondary text-white rounded-lg"><i data-feather="arrow-left" class="w-4 h-4"></i><span>Check In Items</span></a></li>
+                    <li><a href="{% url 'librarian_requests' %}" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"><i data-feather="inbox" class="w-4 h-4"></i><span>Media Requests</span></a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-3">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h1 class="text-2xl font-bold mb-6 flex items-center"><i data-feather="arrow-left" class="mr-2 w-6 h-6"></i>Check In Items</h1>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                            <div class="flex">
+                                <i data-feather="info" class="w-5 h-5 text-blue-500 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium">Check In Process</h3>
+                                    <p class="text-sm text-blue-700">Enter the item barcode to check it in. Overdue items will automatically calculate fines ($0.45/day).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Item Barcode</label>
+                            <div class="relative">
+                                <input type="text" name="barcode" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Scan or enter barcode" required>
+                                <i data-feather="maximize" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center"><i data-feather="check" class="mr-2 w-4 h-4"></i>Check In</button>
+                    </form>
+
+                    {% if checkin_results %}
+                    <div class="mt-8">
+                        <h2 class="text-xl font-semibold mb-4">Check In Result</h2>
+                        {% for result in checkin_results %}
+                        <div class="border rounded-lg p-4 {% if result.is_overdue %}bg-red-50{% else %}bg-green-50{% endif %}">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-medium">{{ result.item.title }}</h3>
+                                    <p class="text-sm text-gray-600">Returned by: {{ result.patron.name }}</p>
+                                    <p class="text-sm text-gray-500">Due date: {{ result.due_date|date:"M d, Y" }}</p>
+                                </div>
+                                {% if result.is_overdue %}
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-red-600">${{ result.fine|floatformat:2 }}</p>
+                                    <p class="text-sm text-gray-600">{{ result.days_overdue }} days overdue</p>
+                                </div>
+                                {% else %}
+                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full">On Time</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-8">
+                        <h2 class="text-xl font-semibold mb-4">Recent Check-Ins</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patron</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Returned</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    {% for checkin in recent_checkins %}
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ checkin.media_item.title }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ checkin.patron.name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ checkin.returned_at|date:"M d, Y H:i" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">No recent check-ins</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>feather.replace();</script>
+</body>
+</html>
