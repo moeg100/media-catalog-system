@@ -66,7 +66,7 @@ DATABASES = {
 }
 
 # Optional SQLite fallback for local development / quick runs
-if os.environ.get('USE_SQLITE', '').lower() in ('1', 'true', 'yes'):
+if os.environ.get('USE_SQLITE', '1').lower() in ('1', 'true', 'yes'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
