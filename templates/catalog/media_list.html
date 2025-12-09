@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head><title>Media List</title></head>
+<body>
+  <h1>Media Items</h1>
+  <p><a href="{% url 'catalog:media_add' %}">Add new item</a></p>
+  <ul>
+    {% for item in media_items %}
+      <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a> ({{ item.media_type }})</li>
+    {% empty %}
+      <li>No items yet</li>
+    {% endfor %}
+  </ul>
+  <hr/>
+  <a href="/admin/">Admin</a>
+</body>
+</html>

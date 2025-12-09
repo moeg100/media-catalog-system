@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><title>{{ media.title }}</title></head>
+<body>
+  <h1>{{ media.title }}</h1>
+  <p>Type: {{ media.media_type }}</p>
+  <p>Release date: {{ media.release_date }}</p>
+  <div>{{ media.description|linebreaks }}</div>
+  {% if media.poster %}
+    <p><img src="{{ media.poster.url }}" alt="{{ media.title }}" style="max-width:200px"/></p>
+  {% endif %}
+  <p>
+    <a href="{% url 'catalog:media_edit' media.slug %}">Edit</a> |
+    <a href="{% url 'catalog:media_delete' media.slug %}">Delete</a> |
+    <a href="{% url 'catalog:media_list' %}">Back to list</a>
+  </p>
+</body>
+</html>
