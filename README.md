@@ -54,7 +54,7 @@ chmod +x setup_env.sh
 Run the script 
 ``` bash
 ./setup_env
-
+```
 ## Usage
 Run the development server:
 
