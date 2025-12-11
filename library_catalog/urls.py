@@ -30,7 +30,7 @@ urlpatterns = [
     path('librarian/requests/', views.librarian_requests, name='librarian_requests'),
     path('librarian/requests/approve/<int:request_id>/', views.librarian_approve_request, name='librarian_approve_request'),
     path('librarian/requests/reject/<int:request_id>/', views.librarian_reject_request, name='librarian_reject_request'),
-    
+    path('librarian/patrons/delete/<int:patron_id>/', views.librarian_delete_patron, name='librarian_delete_patron'),
     path('api/patrons/search/', views.search_patrons_api, name='search_patrons_api'),
     path('api/items/search/', views.search_items_api, name='search_items_api'),
 ]

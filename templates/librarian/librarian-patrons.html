@@ -22,6 +22,15 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8">
+         {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg mb-2 {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         <div class="grid md:grid-cols-4 gap-8">
             <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 h-fit">
                 <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
@@ -69,6 +78,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items Out</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fines</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -87,6 +97,12 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs font-semibold rounded-full {% if patron.status == 'active' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">{{ patron.get_status_display }}</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patron.get_checked_out_count }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ patron.get_total_fines|floatformat:2 }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <form method="post" action="{% url 'librarian_delete_patron' patron_id=patron.id %}" class="inline" onsubmit="return confirm('Are you sure you want to delete patron &quot;{{ patron.name|escapejs }}&quot;? This action cannot be undone.');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-600 hover:text-red-800 flex items-center"><i data-feather="trash-2" class="w-4 h-4 mr-1"></i>Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No patrons found</td></tr>

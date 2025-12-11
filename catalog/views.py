@@ -407,6 +407,29 @@ def librarian_patrons(request):
         'total_count': patrons.count(),
     })
 
+
+@librarian_required
+def librarian_delete_patron(request, patron_id):
+    if request.method != 'POST':
+        return redirect('librarian_patrons')
+    
+    patron = get_object_or_404(Patron, id=patron_id)
+    
+    if patron.get_checked_out_count() > 0:
+        messages.error(request, f'Cannot delete "{patron.name}" - they still have items checked out.')
+        return redirect('librarian_patrons')
+    
+    if patron.get_total_fines() > 0:
+        messages.error(request, f'Cannot delete "{patron.name}" - they have unpaid fines.')
+        return redirect('librarian_patrons')
+    
+    name = patron.name
+    patron.delete()
+    messages.success(request, f'Patron "{name}" has been deleted.')
+    return redirect('librarian_patrons')
+
+
+
 @librarian_required
 def librarian_checkout(request):
     librarian = get_object_or_404(Librarian, id=request.session['librarian_id'])
