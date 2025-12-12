@@ -37,6 +37,11 @@ Windows (Command Prompt):
 ```batch
 .\catalog_env\Scripts\activate
 ```
+If running script is not allowed on the system, run the following command to bypass the restriction temporally on the current process
+
+```batch
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
 3. Install dependencies
 (Ensure your terminal shows (catalog_env) before running)
