@@ -49,18 +49,18 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```bash
 pip install -r requirements.txt
 ```
-## 2. Automatic installation.
+## 2. Automatic installation. (SKIP ON WINDOWS)
 
 Give premission for running the script (Linux/MacOS/WSL)
 ```bash
 chmod +x setup_env.sh
 ```
 
-Run the script 
+Run the script (SKIP ON WINDOWS)
 ``` bash
 ./setup_env.sh
 ```
-## Usage
+## Usage (WINDOWS)
 Run the development server:
 
 ```bash
