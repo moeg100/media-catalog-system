@@ -60,7 +60,7 @@ Run the script (SKIP ON WINDOWS)
 ``` bash
 ./setup_env.sh
 ```
-## Usage (WINDOWS)
+## Usage
 Run the development server:
 
 ```bash
